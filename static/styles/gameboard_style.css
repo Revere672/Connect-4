@@ -4,6 +4,7 @@ html, body {
   margin: 0;
   padding: 0;
   overflow-y: hidden;
+  text-align: center;
 }
 
 #container {
@@ -67,4 +68,9 @@ html, body {
 
 .selected-col:hover {
   background-color: #03009b;
+}
+
+.turn-title {
+  margin-top: 2%;
+  position: relative;
 }

@@ -2,9 +2,10 @@
 <html>
     <head>
         <title>Connect 4</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles/gameboard_style.css') }}"
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/gameboard_style.css') }}">
     </head>
     <body>
+        <h1 class="turn-text" id="turnText">Red's Turn</h1>
         <div id="container">
             <div id="grid">
                 <div class="row">
@@ -72,5 +73,6 @@
                 <div class="selected-col" id="col-6"></div>
             </div>
         </div>
+        <script src="{{ url_for('static', filename='scripts/placeToken.js') }}"></script>
     </body>
 </html>
