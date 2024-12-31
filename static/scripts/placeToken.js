@@ -29,13 +29,98 @@ function putToken(col) {
     return [-1, -1, null];
 }
 
+function checkForWin(row, col, color) {
+    if (color == 'red') {
+        color = 'R'
+    }
+    else if (color == 'yellow') {
+        color = 'Y'
+    }
+
+    // horizontal
+    count = 0
+    for (let i = -3; i <= 3; i++) {
+        if (col+i >= 0 && col+i < gameboard[row].length && gameboard[row][col+i] == color) {
+            count++
+        }
+        else {
+            count = 0
+        }
+
+        if (count == 4) {
+            return true
+        }
+    }
+
+    // vertical
+    count = 0
+    for (let i = -3; i <= 3; i++) {
+        if (row+i >= 0 && row+i < gameboard.length && gameboard[row+i][col] == color) {
+            count++
+        }
+        else {
+            count = 0
+        }
+
+        if (count == 4) {
+            return true
+        }
+    }
+
+    // down diagonal
+    count = 0
+    for (let i = -3; i <= 3; i++) {
+        if (row+i >= 0 && row+i < gameboard.length && col+i >= 0 && col+i < gameboard[row].length && gameboard[row+i][col+i] == color) {
+            count++
+        }
+        else {
+            count = 0
+        }
+
+        if (count == 4) {
+            return true
+        }
+    }
+
+    // up diagonal
+    count = 0
+    for (let i = -3; i <= 3; i++) {
+        if (row-i >= 0 && row-i < gameboard.length && col+i >= 0 && col+i < gameboard[row].length && gameboard[row-i][col+i] == color) {
+            count++
+        }
+        else {
+            count = 0
+        }
+
+        if (count == 4) {
+            return true
+        }
+    }
+}
+
 const divs = document.querySelectorAll('.selected-col');
-divs.forEach(div => {
-    div.addEventListener('click', () => {
+handlers = []
+
+var colClick = function(div) {
+    var handler = function(event) {
         const [row, col, color] = putToken(div.id);
         if (color) {
             const circle = document.getElementById(`circle-${row}-${col}`);
             circle.style.backgroundColor = color;
+            if (checkForWin(row, col, color)) {
+                const capitalizeColor = color.charAt(0).toUpperCase() + color.slice(1);
+                document.getElementById("turnText").textContent = `${capitalizeColor} Wins!`;
+                divs.forEach((d, i) => {
+                    d.removeEventListener('click', handlers[i])
+                });
+            }
         }
-    });
+    }
+
+    handlers.push(handler)
+    return handler
+}
+
+divs.forEach(div => {
+    div.addEventListener('click', colClick(div));
 });
