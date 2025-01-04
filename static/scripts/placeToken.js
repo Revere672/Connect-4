@@ -1,9 +1,15 @@
 let turn = true
 let gameboard = [];
-for (let i = 0; i < 6; i++) {
-    gameboard.push([]);
-    for (let j = 0; j < 7; j++) {
-        gameboard[i].push('');
+
+function setGameboard() {
+    turn = true
+    gameboard = [];
+    for (let i = 0; i < 6; i++) {
+        gameboard.push([]);
+        for (let j = 0; j < 7; j++) {
+            gameboard[i].push('');
+            document.getElementById(`circle-${i}-${j}`).style.backgroundColor = '#00004E';
+        }
     }
 }
 
@@ -98,8 +104,31 @@ function checkForWin(row, col, color) {
     }
 }
 
+setGameboard();
+
 const divs = document.querySelectorAll('.selected-col');
-handlers = []
+handlers = [];
+
+const resetButton = document.querySelector('.btn-reset');
+
+var resetClick = function() {
+    var handler = function(event) {
+        setGameboard();
+        document.getElementById('turnText').textContent = "Red\'s Turn";
+
+        divs.forEach((d, i) => {
+            d.removeEventListener('click', handlers[i])
+        });
+
+        handlers = [];
+        
+        divs.forEach(div => {
+            div.addEventListener('click', colClick(div));
+        });
+    }
+
+    return handler;
+}
 
 var colClick = function(div) {
     var handler = function(event) {
@@ -124,3 +153,5 @@ var colClick = function(div) {
 divs.forEach(div => {
     div.addEventListener('click', colClick(div));
 });
+
+resetButton.addEventListener('click', resetClick());
