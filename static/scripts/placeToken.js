@@ -1,157 +1,184 @@
 let turn = true
 let gameboard = [];
 
-function setGameboard() {
-    turn = true
-    gameboard = [];
-    for (let i = 0; i < 6; i++) {
-        gameboard.push([]);
-        for (let j = 0; j < 7; j++) {
-            gameboard[i].push('');
-            document.getElementById(`circle-${i}-${j}`).style.backgroundColor = '#00004E';
-        }
-    }
+// function putToken(col) {
+//     colNum = parseInt(col.charAt(col.length - 1))
+//     for (let i = gameboard.length-1; i >= 0; i--) {
+//         if (gameboard[i][colNum] == '') {
+//             if (turn) {
+//                 gameboard[i][colNum] = 'R';
+//                 turn = !turn;
+//                 document.getElementById("turnText").textContent = "Yellow\'s Turn";
+//                 return [i, colNum, 'red'];
+//             }
+//             else {
+//                 gameboard[i][colNum] = 'Y';
+//                 turn = !turn;
+//                 document.getElementById('turnText').textContent = "Red\'s Turn";
+//                 return [i, colNum, 'yellow'];
+//             }
+//         }
+//     }
+
+//     return [-1, -1, null];
+// }
+
+// function checkForWin(row, col, color) {
+//     if (color == 'red') {
+//         color = 'R'
+//     }
+//     else if (color == 'yellow') {
+//         color = 'Y'
+//     }
+
+//     // horizontal
+//     count = 0
+//     for (let i = -3; i <= 3; i++) {
+//         if (col+i >= 0 && col+i < gameboard[row].length && gameboard[row][col+i] == color) {
+//             count++
+//         }
+//         else {
+//             count = 0
+//         }
+
+//         if (count == 4) {
+//             return true
+//         }
+//     }
+
+//     // vertical
+//     count = 0
+//     for (let i = -3; i <= 3; i++) {
+//         if (row+i >= 0 && row+i < gameboard.length && gameboard[row+i][col] == color) {
+//             count++
+//         }
+//         else {
+//             count = 0
+//         }
+
+//         if (count == 4) {
+//             return true
+//         }
+//     }
+
+//     // down diagonal
+//     count = 0
+//     for (let i = -3; i <= 3; i++) {
+//         if (row+i >= 0 && row+i < gameboard.length && col+i >= 0 && col+i < gameboard[row].length && gameboard[row+i][col+i] == color) {
+//             count++
+//         }
+//         else {
+//             count = 0
+//         }
+
+//         if (count == 4) {
+//             return true
+//         }
+//     }
+
+//     // up diagonal
+//     count = 0
+//     for (let i = -3; i <= 3; i++) {
+//         if (row-i >= 0 && row-i < gameboard.length && col+i >= 0 && col+i < gameboard[row].length && gameboard[row-i][col+i] == color) {
+//             count++
+//         }
+//         else {
+//             count = 0
+//         }
+
+//         if (count == 4) {
+//             return true
+//         }
+//     }
+// }
+
+async function setGameboard() {
+    console.log('resetting gameboard');
+    await fetch('reset', { method: 'POST' });
+    console.log('reset done');
 }
-
-function putToken(col) {
-    colNum = parseInt(col.charAt(col.length - 1))
-    for (let i = gameboard.length-1; i >= 0; i--) {
-        if (gameboard[i][colNum] == '') {
-            if (turn) {
-                gameboard[i][colNum] = 'R';
-                turn = !turn;
-                document.getElementById("turnText").textContent = "Yellow\'s Turn";
-                return [i, colNum, 'red'];
-            }
-            else {
-                gameboard[i][colNum] = 'Y';
-                turn = !turn;
-                document.getElementById('turnText').textContent = "Red\'s Turn";
-                return [i, colNum, 'yellow'];
-            }
-        }
-    }
-
-    return [-1, -1, null];
-}
-
-function checkForWin(row, col, color) {
-    if (color == 'red') {
-        color = 'R'
-    }
-    else if (color == 'yellow') {
-        color = 'Y'
-    }
-
-    // horizontal
-    count = 0
-    for (let i = -3; i <= 3; i++) {
-        if (col+i >= 0 && col+i < gameboard[row].length && gameboard[row][col+i] == color) {
-            count++
-        }
-        else {
-            count = 0
-        }
-
-        if (count == 4) {
-            return true
-        }
-    }
-
-    // vertical
-    count = 0
-    for (let i = -3; i <= 3; i++) {
-        if (row+i >= 0 && row+i < gameboard.length && gameboard[row+i][col] == color) {
-            count++
-        }
-        else {
-            count = 0
-        }
-
-        if (count == 4) {
-            return true
-        }
-    }
-
-    // down diagonal
-    count = 0
-    for (let i = -3; i <= 3; i++) {
-        if (row+i >= 0 && row+i < gameboard.length && col+i >= 0 && col+i < gameboard[row].length && gameboard[row+i][col+i] == color) {
-            count++
-        }
-        else {
-            count = 0
-        }
-
-        if (count == 4) {
-            return true
-        }
-    }
-
-    // up diagonal
-    count = 0
-    for (let i = -3; i <= 3; i++) {
-        if (row-i >= 0 && row-i < gameboard.length && col+i >= 0 && col+i < gameboard[row].length && gameboard[row-i][col+i] == color) {
-            count++
-        }
-        else {
-            count = 0
-        }
-
-        if (count == 4) {
-            return true
-        }
-    }
-}
-
-setGameboard();
 
 const divs = document.querySelectorAll('.selected-col');
-handlers = [];
-
 const resetButton = document.querySelector('.btn-reset');
 
-var resetClick = function() {
-    var handler = function(event) {
-        setGameboard();
-        document.getElementById('turnText').textContent = "Red\'s Turn";
+// Array to store event handler references
+const handlers = [];
 
-        divs.forEach((d, i) => {
-            d.removeEventListener('click', handlers[i])
+var resetClick = async function(event) {    
+    // Reset the backend game state
+    await fetch('/reset', { method: 'POST' });
+
+    // Reset the frontend state
+    document.getElementById('turnText').textContent = "Red's Turn";
+
+    // Clear the board's visuals
+    const circles = document.querySelectorAll('.circle');
+        circles.forEach(circle => {
+            circle.style.backgroundColor = ''; // Reset to default (usually transparent or white)
         });
 
-        handlers = [];
-        
-        divs.forEach(div => {
-            div.addEventListener('click', colClick(div));
-        });
-    }
+    // Remove old event listeners
+    divs.forEach((div, i) => {
+        div.removeEventListener('click', handlers[i]);
+    });
 
-    return handler;
-}
+    // Clear and reattach new listeners
+    handlers.length = 0; // Clear handlers array
+    divs.forEach(div => {
+        const handler = colClick(div); // Get new handler
+        handlers.push(handler); // Store it
+        div.addEventListener('click', handler); // Attach it
+    });
+
+};
 
 var colClick = function(div) {
-    var handler = function(event) {
-        const [row, col, color] = putToken(div.id);
+    return async function(event) {
+        let data = { id: div.id }; // Send div ID as data
+        let response = await fetch('/move', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+        let result = await response.json();
+        const { row, col, color } = result;
+
         if (color) {
             const circle = document.getElementById(`circle-${row}-${col}`);
-            circle.style.backgroundColor = color;
-            if (checkForWin(row, col, color)) {
+            if (circle) circle.style.backgroundColor = color;
+
+            data = { row: row, col: col, color: color }; // Send div ID as data
+            response = await fetch('/check-win', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            result = await response.json();
+            const winner = result.winner;
+
+            if (winner) {
                 const capitalizeColor = color.charAt(0).toUpperCase() + color.slice(1);
                 document.getElementById("turnText").textContent = `${capitalizeColor} Wins!`;
-                divs.forEach((d, i) => {
-                    d.removeEventListener('click', handlers[i])
+
+                // Remove all event listeners after the game ends
+                divs.forEach((div, i) => {
+                    div.removeEventListener('click', handlers[i]);
                 });
             }
         }
-    }
+    };
+};
 
-    handlers.push(handler)
-    return handler
-}
-
+// Attach event listeners on page load
 divs.forEach(div => {
-    div.addEventListener('click', colClick(div));
+    const handler = colClick(div);
+    handlers.push(handler);
+    div.addEventListener('click', handler);
 });
 
-resetButton.addEventListener('click', resetClick());
+// Attach reset button event listener
+resetButton.addEventListener('click', resetClick);
